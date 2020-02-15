@@ -10,7 +10,15 @@ class PromiseComplex {
         const succeed = handle[0]
         const nextPromise = handle[2]
         if (typeof succeed === 'function') {
-          const x = succeed.call(undefined, result)
+          // 这里调用的时候有可能报错
+          let x
+          try {
+            x = succeed.call(undefined, result)
+          } catch (e) {
+            // 2.2.7.2 如果onFulfilled或onRejected抛出一个异常e
+            // promise2 必须被拒绝（rejected）并把e当作原因
+            return nextPromise.reject(e)
+          }
           // 2.2.7.1 如果onFulfilled或onRejected返回一个值x,
           // 运行 Promise Resolution Procedure [[Resolve]](promise2, x)
           // promise2 表示第二个 promise
@@ -28,7 +36,12 @@ class PromiseComplex {
         const fail = handle[1]
         const nextPromise = handle[2]
         if (typeof fail === 'function') {
-          const x = fail.call(undefined, reason)
+          let x
+          try {
+            x = fail.call(undefined, reason)
+          } catch (e) {
+            return nextPromise.reject(e)
+          }
           nextPromise.resolveWith(x)
         }
       })

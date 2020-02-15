@@ -52,7 +52,7 @@ describe('Promise', () => {
       // 因为顺序是先 then -> 调用 success -> 调用 succeed
       // 而 succeed 是放入了 setTimeout 中的
       setTimeout(() => { 
-        assert.isTrue(success.called)
+        assert(success.called)
         // 如果代码里面需要异步的测试，则需要加 done
         // 表示异步测试的完成，告诉 mocha 可以检查其测试结果了
         // 不然很多个任务都是异步测试的话，mocha 就不知道哪个是先完成的(这里 mocha 对于测试用例是一个一个同步执行的)
@@ -68,7 +68,7 @@ describe('Promise', () => {
       assert.isFalse(fail.called)
       reject()
       setTimeout(() => { 
-        assert.isTrue(fail.called)
+        assert(fail.called)
         done()
       });
     })
@@ -93,8 +93,8 @@ describe('Promise', () => {
       resolve('hii')
       setTimeout(() => {
         assert(promise.state === 'fulfilled')
-        assert.isTrue(success.calledOnce)
-        assert.isTrue(success.calledWith('hi'))
+        assert(success.calledOnce)
+        assert(success.calledWith('hi'))
         done()
       }, 0)
     })
@@ -113,8 +113,8 @@ describe('Promise', () => {
       reject('hii')
       setTimeout(() => {
         assert(promise.state === 'rejected')
-        assert.isTrue(fail.calledOnce)
-        assert.isTrue(fail.calledWith('hi'))
+        assert(fail.calledOnce)
+        assert(fail.calledWith('hi'))
         done()
       }, 0)
     })
@@ -131,7 +131,7 @@ describe('Promise', () => {
     assert.isFalse(success.called)
     setTimeout(() => {
       // 这个时候代码执行完了，success 函数被调用了
-      assert.isTrue(success.called)
+      assert(success.called)
       done()
     }, 0)
   })
@@ -144,7 +144,7 @@ describe('Promise', () => {
     promise.then(null, fail)
     assert.isFalse(fail.called)
     setTimeout(() => {
-      assert.isTrue(fail.called)
+      assert(fail.called)
       done()
     }, 0)
   })
@@ -232,7 +232,7 @@ describe('Promise', () => {
       .then(() => new Promise((resolve) => resolve()))
       .then(fn)
     setTimeout(() => {
-      assert.isTrue(fn.called)
+      assert(fn.called)
       done()
     }, 0) // 源码部分使用了 process.nextTick 解决了，因为这个是微任务，优先级更高
     // 意味着 fn 会更快的执行(因为比 setTimeout 快)
@@ -246,7 +246,7 @@ describe('Promise', () => {
       .then(() => new Promise((resolve, reject) => reject()))
       .then(null, fn)
     setTimeout(() => {
-      assert.isTrue(fn.called)
+      assert(fn.called)
       done()
     }, 0)
   })
@@ -262,7 +262,7 @@ describe('Promise', () => {
       // 这里主要看 promise.then 里的 Promise
       // 如果是成功则调用 succeed 函数
       // 如果是失败则调用 fail 函数
-      assert.isTrue(fn.called)
+      assert(fn.called)
       done()
     }, 0)
   })
@@ -275,7 +275,22 @@ describe('Promise', () => {
       .then(null, () => new Promise((resolve, reject) => reject()))
       .then(null, fn)
     setTimeout(() => {
-      assert.isTrue(fn.called)
+      assert(fn.called)
+      done()
+    }, 0)
+  })
+  it('2.2.7.2 如果success或fail抛出一个异常e,promise2 必须被拒绝', done => {
+    const promise = new Promise(resolve => {
+      resolve()
+    })
+    const error = new Error()
+    const fn = sinon.fake()
+    promise
+      .then(() => { throw error })
+      .then(null, fn)
+    setTimeout(() => {
+      assert(fn.called)
+      assert(fn.calledWith(error))
       done()
     }, 0)
   })
