@@ -223,7 +223,7 @@ describe('Promise', () => {
       done()
     })
   })
-  it(`2.2.7.1.2 x 是一个 promise 实例`, done => {
+  it(`2.2.7.1.2 success 的返回值是一个 promise 实例`, done => {
     const promise = new Promise(resolve => {
       resolve()
     })
@@ -237,13 +237,42 @@ describe('Promise', () => {
     }, 0) // 源码部分使用了 process.nextTick 解决了，因为这个是微任务，优先级更高
     // 意味着 fn 会更快的执行(因为比 setTimeout 快)
   })
-  it(`2.2.7.1.2 x 是一个 promise 实例, 测试第一个 then 的失败回调`, done => {
+  it(`2.2.7.1.2 success 的返回值是一个 promise 实例, 且失败了`, done => {
     const promise = new Promise(resolve => {
       resolve()
     })
     const fn = sinon.fake()
     promise
       .then(() => new Promise((resolve, reject) => reject()))
+      .then(null, fn)
+    setTimeout(() => {
+      assert.isTrue(fn.called)
+      done()
+    }, 0)
+  })
+  it(`2.2.7.1.2 fail 的返回值是一个 promise 实例`, done => {
+    const promise = new Promise((resolve, reject) => {
+      reject()
+    })
+    const fn = sinon.fake()
+    promise
+      .then(null, () => new Promise((resolve, reject) => resolve()))
+      .then(fn)
+    setTimeout(() => {
+      // 这里主要看 promise.then 里的 Promise
+      // 如果是成功则调用 succeed 函数
+      // 如果是失败则调用 fail 函数
+      assert.isTrue(fn.called)
+      done()
+    }, 0)
+  })
+  it(`2.2.7.1.2 fail 的返回值是一个 promise 实例, 且失败了`, done => {
+    const promise = new Promise((resolve, reject) => {
+      reject()
+    })
+    const fn = sinon.fake()
+    promise
+      .then(null, () => new Promise((resolve, reject) => reject()))
       .then(null, fn)
     setTimeout(() => {
       assert.isTrue(fn.called)
