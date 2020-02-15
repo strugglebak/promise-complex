@@ -3,7 +3,6 @@ import { describe, it } from 'mocha'
 import Promise from '../src/promise'
 import * as sinon from 'sinon'
 import * as sinonChai from 'sinon-chai'
-import { rejects } from 'assert'
 
 const assert = chai.assert
 chai.use(sinonChai)

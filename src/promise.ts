@@ -2,7 +2,7 @@ class PromiseComplex {
   state = 'pending'
   callbacks = [] // 用来保存成功以及失败回调的数组
   resolve(result) {
-    process.nextTick(() => {
+    nextTick(() => {
       if (this.state !== 'pending') return 
       this.state = 'fulfilled'
       // 遍历 callbacks, 调用所有的 handle
@@ -28,7 +28,7 @@ class PromiseComplex {
     })
   }
   reject(reason) {
-    process.nextTick(() => {
+    nextTick(() => {
       if (this.state !== 'pending') return 
       this.state = 'rejected'
       // 遍历 callbacks, 调用所有的 handle
@@ -104,6 +104,28 @@ class PromiseComplex {
       this.resolve(x)
     }
   }
+}
+
+// 兼容 process.nextTick 和 setImmediate 方案
+// 其实就是 vue 里面的 nextTick 方案
+// 主要是用 mutationObserver 实现的，这个只要改动下 dom 去更新一个函数
+// 而在这个函数里面去做操作即可，这个是比 setTimeout 要快的
+function nextTick(fn) {
+  // 兼容处理
+  if (process !== undefined && typeof process.nextTick === 'function') {
+    return process.nextTick(fn)
+  }
+
+  var counter = 1
+  var observer = new MutationObserver(fn)
+  var textNode = document.createTextNode(String(counter))
+
+  // 监听节点变化
+  observer.observe(textNode, { characterData: true })
+
+  // 修改节点
+  counter = (counter + 1) % 2
+  textNode.data = String(counter)
 }
 
 export default PromiseComplex
