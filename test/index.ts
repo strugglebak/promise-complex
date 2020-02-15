@@ -237,4 +237,17 @@ describe('Promise', () => {
     }, 0) // 源码部分使用了 process.nextTick 解决了，因为这个是微任务，优先级更高
     // 意味着 fn 会更快的执行(因为比 setTimeout 快)
   })
+  it(`2.2.7.1.2 x 是一个 promise 实例, 测试第一个 then 的失败回调`, done => {
+    const promise = new Promise(resolve => {
+      resolve()
+    })
+    const fn = sinon.fake()
+    promise
+      .then(() => new Promise((resolve, reject) => reject()))
+      .then(null, fn)
+    setTimeout(() => {
+      assert.isTrue(fn.called)
+      done()
+    }, 0)
+  })
 })
