@@ -234,6 +234,7 @@ describe('Promise', () => {
     setTimeout(() => {
       assert.isTrue(fn.called)
       done()
-    }, 10) // 这里有个小 bug, 如果将延时时间改为 0 则不通过
+    }, 0) // 源码部分使用了 process.nextTick 解决了，因为这个是微任务，优先级更高
+    // 意味着 fn 会更快的执行(因为比 setTimeout 快)
   })
 })

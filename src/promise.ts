@@ -2,7 +2,7 @@ class PromiseComplex {
   state = 'pending'
   callbacks = [] // 用来保存成功以及失败回调的数组
   resolve(result) {
-    setTimeout(() => {
+    process.nextTick(() => {
       if (this.state !== 'pending') return 
       this.state = 'fulfilled'
       // 遍历 callbacks, 调用所有的 handle
@@ -17,10 +17,10 @@ class PromiseComplex {
           nextPromise.resolveWith(x)
         }
       })
-    }, 0)
+    })
   }
   reject(reason) {
-    setTimeout(() => {
+    process.nextTick(() => {
       if (this.state !== 'pending') return 
       this.state = 'rejected'
       // 遍历 callbacks, 调用所有的 handle
@@ -32,7 +32,7 @@ class PromiseComplex {
           nextPromise.resolveWith(x)
         }
       })
-    }, 0)
+    })
   }
   constructor(fn) {
     if (typeof fn !== 'function') {
