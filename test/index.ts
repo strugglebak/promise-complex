@@ -3,6 +3,7 @@ import { describe, it } from 'mocha'
 import Promise from '../src/promise'
 import * as sinon from 'sinon'
 import * as sinonChai from 'sinon-chai'
+import { rejects } from 'assert'
 
 const assert = chai.assert
 chai.use(sinonChai)
@@ -279,7 +280,7 @@ describe('Promise', () => {
       done()
     }, 0)
   })
-  it('2.2.7.2 如果success或fail抛出一个异常e,promise2 必须被拒绝', done => {
+  it('2.2.7.2 如果success抛出一个异常e,promise2 必须被拒绝', done => {
     const promise = new Promise(resolve => {
       resolve()
     })
@@ -287,6 +288,21 @@ describe('Promise', () => {
     const fn = sinon.fake()
     promise
       .then(() => { throw error })
+      .then(null, fn)
+    setTimeout(() => {
+      assert(fn.called)
+      assert(fn.calledWith(error))
+      done()
+    }, 0)
+  })
+  it('2.2.7.2 如果fail抛出一个异常e,promise2 必须被拒绝', done => {
+    const promise = new Promise((resolve, reject) => {
+      reject()
+    })
+    const error = new Error()
+    const fn = sinon.fake()
+    promise
+      .then(null, () => { throw error })
       .then(null, fn)
     setTimeout(() => {
       assert(fn.called)
