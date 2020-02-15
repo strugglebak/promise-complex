@@ -1,4 +1,4 @@
-class PromiseEasy {
+class PromiseComplex {
   state = 'pending'
   callbacks = [] // 用来保存成功以及失败回调的数组
   resolve(result) {
@@ -44,7 +44,8 @@ class PromiseEasy {
     }
     // 将函数 push 进 callbacks 中
     this.callbacks.push(handle)
+    return new PromiseComplex(() => {})
   }
 }
 
-export default PromiseEasy
+export default PromiseComplex
