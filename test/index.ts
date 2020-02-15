@@ -223,4 +223,17 @@ describe('Promise', () => {
       done()
     })
   })
+  it(`2.2.7.1.2 x 是一个 promise 实例`, done => {
+    const promise = new Promise(resolve => {
+      resolve()
+    })
+    const fn = sinon.fake()
+    promise
+      .then(() => new Promise((resolve) => resolve()))
+      .then(fn)
+    setTimeout(() => {
+      assert.isTrue(fn.called)
+      done()
+    }, 10) // 这里有个小 bug, 如果将延时时间改为 0 则不通过
+  })
 })
