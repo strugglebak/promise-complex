@@ -340,4 +340,19 @@ describe('Promise API', () => {
       done()
     })
   })
+  it('测试 catch', done => {
+    const promise = new Promise(resolve => {
+      resolve()
+    })
+    const fn = sinon.fake()
+    promise
+      .then(result => { throw '233' })
+      .catch((e) => { assert(e === '233') })
+      .then(fn)
+
+    setTimeout(() => {
+      assert(fn.called)
+      done()
+    }, 0)
+  })
 })

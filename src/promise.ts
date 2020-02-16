@@ -46,8 +46,8 @@ class PromiseComplex {
     })
   }
 
-  static all(iterable) {
-
+  catch(reject) {
+    return this.then(null, reject)
   }
 
   resolve(result) {
