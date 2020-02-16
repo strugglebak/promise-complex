@@ -76,7 +76,6 @@ class PromiseComplex {
 
       const processResult = (result, i) => {
         resultArray[i] = result
-        console.log(result)
         // 2. promises 中所有的promise都“完成”时
         // 或参数中(result)不包含 promise 时回调完成。
         if (++index === promises.length) resolve(resultArray)
@@ -88,6 +87,28 @@ class PromiseComplex {
             result => processResult(result, i),
             // 4. 如果参数中有一个promise失败，那么Promise.all返回的promise对象失败
             reason => reject(reason)
+          )
+      }
+    })
+  }
+  // draft
+  static allSettled(promises) {
+    return new PromiseComplex((resolve, reject) => {
+      let index = 0
+      let resultArray = []
+      if (promises && promises.length === 0) return resolve(resultArray)
+
+      const processResult = (result, i, state) => {
+        resultArray[i] = state === 'fulfilled'
+          ? {state, result}
+          : {state, reason: result}
+        if (++index === promises.length) resolve(resultArray)
+      }
+      for (let i = 0; i < promises.length; i++) {
+        PromiseComplex.resolve2(promises[i])
+          .then(
+            result => processResult(result, i, 'fulfilled'),
+            reason => processResult(reason, i, 'rejected')
           )
       }
     })

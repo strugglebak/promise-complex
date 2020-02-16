@@ -391,4 +391,19 @@ describe('Promise API', () => {
       done()
     }, 10)
   })
+  it('测试 allSettled', done => {
+    const promise1 = Promise.resolve2(3)
+    const promise2 = new Promise((resolve, reject) => reject('foo'))
+    const promises = [promise1, promise2]
+
+    let ret
+    Promise.allSettled(promises).then(results => {
+      ret = results
+    })
+    setTimeout(() => {
+      assert(ret[0].state === 'fulfilled' && ret[0].result === 3)
+      assert(ret[1].state === 'rejected' && ret[1].reason === 'foo')
+      done()
+    }, 10)
+  })
 })
