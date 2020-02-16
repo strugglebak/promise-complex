@@ -28,6 +28,18 @@ class PromiseComplex {
     })
   }
 
+  static resolve2(result) {
+    return new PromiseComplex((resolve, reject) => {
+      resolve(result)
+    })
+  }
+
+  static reject2(reason) {
+    return new PromiseComplex((resolve, reject) => {
+      reject(reason)
+    })
+  }
+
   resolve(result) {
     this.resolveOrReject('fulfilled', result, 0)
   }
@@ -81,7 +93,7 @@ class PromiseComplex {
       this.resolve(x)
     }
   }
-  private resolveWithObject(x) {
+  private getThen(x) {
     // 2.3.3另外，如果x是个对象或者方法
     let then
     // 2.3.3.2 如果取回的x.then属性的结果为一个异常e,用e作为原因reject promise
@@ -90,6 +102,10 @@ class PromiseComplex {
     } catch (e) {
       return this.reject(e)
     }
+    return then
+  }
+  private resolveWithObject(x) {
+    let then = this.getThen(x)
     this.resolveWithThenable(then, x)
   }
 
