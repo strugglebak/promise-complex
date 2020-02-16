@@ -1,3 +1,5 @@
+import { promisify } from "util"
+
 class PromiseComplex {
   state = 'pending'
   callbacks = [] // 用来保存成功以及失败回调的数组
@@ -110,6 +112,20 @@ class PromiseComplex {
             result => processResult(result, i, 'fulfilled'),
             reason => processResult(reason, i, 'rejected')
           )
+      }
+    })
+  }
+
+  static race(promises) {
+    return new PromiseComplex((resolve, reject) => {
+      if (promises && promises.length === 0) return 
+      for (let i = 0; i < promises.length; i++) {
+        PromiseComplex.resolve2(promises[i])
+        .then(
+          // 谁(promises[i]) 先完成谁先 resolve
+          result => resolve(result),
+          reason => reject(reason)
+        )
       }
     })
   }

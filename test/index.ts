@@ -406,4 +406,26 @@ describe('Promise API', () => {
       done()
     }, 10)
   })
+  it('测试 race', done => {
+    const promise1 = new Promise(
+      (resolve, reject) => setTimeout(() => resolve(200), 200)
+    )
+    const promise2 = new Promise(
+      (resolve, reject) => setTimeout(() => resolve(10), 10)
+    )
+    const promise3 = new Promise(
+      (resolve, reject) => setTimeout(() => reject(100), 100)
+    )
+    let result, reason
+    Promise.race([promise1, promise2, promise3])
+      .then(
+        data => result = data,
+        error => reason = error
+      )
+    
+    setTimeout(() => {
+      assert(result === 10)
+      done()
+    }, 500)
+  })
 })
