@@ -32,7 +32,6 @@ class PromiseComplex {
     if (result instanceof PromiseComplex) return result
     return new PromiseComplex((resolve, reject) => {
       if (result && result.then && typeof result.then === 'function') {
-        console.log('这里执行了')
         result.then(resolve, reject)
       } else {
         resolve(result)
