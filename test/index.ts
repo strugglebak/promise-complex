@@ -339,15 +339,5 @@ describe('Promise API', () => {
       assert(result === 123)
       done()
     })
-
-    // reject thenable
-    const promise2 = Promise.reject2({
-      then(resolve, reject) { reject('233') }
-    })
-    assert(promise2 instanceof Promise)
-    promise2.then(null, result => {
-      assert(result === '233')
-      done()
-    })
   })
 })
