@@ -49,6 +49,19 @@ class PromiseComplex {
     return this.then(null, reject)
   }
 
+  finally(callback) {
+    // 无论成功或者失败，都会走到 finally 中
+    // finally 还可以继续 then
+    return this.then(
+      (result) => {
+        return PromiseComplex.resolve2(callback()).then(() => result)
+      },
+      (error) => {
+        return PromiseComplex.resolve2(callback()).then(() => {throw error})
+      }
+    )
+  }
+
   resolve(result) {
     this.resolveOrReject('fulfilled', result, 0)
   }

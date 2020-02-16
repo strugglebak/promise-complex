@@ -355,4 +355,22 @@ describe('Promise API', () => {
       done()
     }, 0)
   })
+  it('测试 finally', () => {
+    const promise = new Promise(resolve => {
+      resolve()
+    })
+    const callbacks = [sinon.fake(), sinon.fake(), sinon.fake()]
+    promise
+      .then(() => { throw 'error' })
+      .catch(callbacks[0])
+      .finally(callbacks[1])
+      .then(callbacks[2])
+    
+    setTimeout(() => {
+      assert(callbacks[0].called)
+      assert(callbacks[1].called)
+      assert(callbacks[2].called)
+      assert(callbacks[2].calledAfter(callbacks[1]))
+    }, 0)
+  })
 })
