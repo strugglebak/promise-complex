@@ -373,4 +373,22 @@ describe('Promise API', () => {
       assert(callbacks[2].calledAfter(callbacks[1]))
     }, 0)
   })
+
+  it('测试 all, 等待所有都完成(或第一个失败) ', done => {
+    const promise1 = Promise.resolve2(3)
+    const promise2 = 1337
+    const promise3 = new Promise((resolve, reject) => {
+      resolve('foo')
+    }) 
+    let ret
+    Promise.all([promise1, promise2, promise3]).then(results => { 
+      ret = results
+    })
+    setTimeout(() => {
+      assert(ret[0] === 3)
+      assert(ret[1] === 1337)
+      assert(ret[2] === 'foo')
+      done()
+    }, 10)
+  })
 })
