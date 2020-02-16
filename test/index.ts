@@ -319,8 +319,10 @@ describe('Promise API', () => {
       assert(result === 123)
       done()
     })
-
-    // resolve thenable
+    const promise2 = Promise.resolve2(new Promise(() => {}))
+    assert(promise2 instanceof Promise)
+  })
+  it('测试 resolve thenable', done => {
     const promise2 = Promise.resolve2({
       then(resolve, reject) { resolve('233') }
     })

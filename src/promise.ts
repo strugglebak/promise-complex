@@ -29,8 +29,14 @@ class PromiseComplex {
   }
 
   static resolve2(result) {
+    if (result instanceof PromiseComplex) return result
     return new PromiseComplex((resolve, reject) => {
-      resolve(result)
+      if (result && result.then && typeof result.then === 'function') {
+        console.log('这里执行了')
+        result.then(resolve, reject)
+      } else {
+        resolve(result)
+      }
     })
   }
 
@@ -38,6 +44,10 @@ class PromiseComplex {
     return new PromiseComplex((resolve, reject) => {
       reject(reason)
     })
+  }
+
+  static all(iterable) {
+
   }
 
   resolve(result) {
