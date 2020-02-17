@@ -95,25 +95,13 @@ class PromiseComplex {
   }
   // draft
   static allSettled(promises) {
-    return new PromiseComplex((resolve, reject) => {
-      let index = 0
-      let resultArray = []
-      if (promises && promises.length === 0) return resolve(resultArray)
-
-      const processResult = (result, i, state) => {
-        resultArray[i] = state === 'fulfilled'
-          ? {state, result}
-          : {state, reason: result}
-        if (++index === promises.length) resolve(resultArray)
-      }
-      for (let i = 0; i < promises.length; i++) {
-        PromiseComplex.resolve2(promises[i])
-          .then(
-            result => processResult(result, i, 'fulfilled'),
-            reason => processResult(reason, i, 'rejected')
-          )
-      }
-    })
+    const x = (promises) => promises.map(
+      promise => promise.then(
+        value => ({status: 'fulfilled', value}),
+        reason => ({status: 'rejected', reason})
+      )
+   )
+   return PromiseComplex.all(x(promises))
   }
 
   static race(promises) {

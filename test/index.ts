@@ -401,8 +401,8 @@ describe('Promise API', () => {
       ret = results
     })
     setTimeout(() => {
-      assert(ret[0].state === 'fulfilled' && ret[0].result === 3)
-      assert(ret[1].state === 'rejected' && ret[1].reason === 'foo')
+      assert(ret[0].status === 'fulfilled' && ret[0].value === 3)
+      assert(ret[1].status === 'rejected' && ret[1].reason === 'foo')
       done()
     }, 10)
   })
