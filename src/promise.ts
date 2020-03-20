@@ -1,5 +1,3 @@
-import { promisify } from "util"
-
 class PromiseComplex {
   state = 'pending'
   callbacks = [] // 用来保存成功以及失败回调的数组
